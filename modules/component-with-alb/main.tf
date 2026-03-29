@@ -107,7 +107,7 @@ resource "aws_lb" "main" {
 }
 
 resource "aws_lb_listener" "front-end" {
-  load_balancer_arn = aws_alb.main.arn
+  load_balancer_arn = aws_lb.main.arn
   port              = var.lb["port"]
   protocol          = "HTTP"
 
@@ -122,7 +122,7 @@ resource "aws_route53_record" "dns" {
   name    = "${var.component}-${var.env}.${var.dns_domain}"
   type    = "CNAME"
   ttl     = 30
-  records = [aws_alb.main.dns_name]  
+  records = [aws_lb.main.dns_name]  
 }
 
 # resource "null_resource" "ansible" {
