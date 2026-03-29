@@ -66,7 +66,7 @@ apps = {
     }
     lb = {
       lb_internal = true
-      port = 8080
+      port = 8000
     }
     asg = {
       min_size = 2
