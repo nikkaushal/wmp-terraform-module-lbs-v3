@@ -94,7 +94,7 @@ resource "aws_lb_target_group" "main" {
   }
 
 }
-resource "aws_alb" "main" {
+resource "aws_lb" "main" {
   name            = "${var.component}-${var.env}"
   internal        = var.lb["lb_internal"]
   load_balancer_type = "application"
