@@ -50,7 +50,7 @@ resource "aws_launch_template" "main" {
   instance_type = var.instance_type
   vpc_security_group_ids = [aws_security_group.instance.id, aws_security_group.alb.id]
 
-  user_data = base64encode(templatefile("${path.module}/usedata.sh", 
+  user_data = base64encode(templatefile("${path.module}/userdata.sh", 
     {
       ENV       = var.env,
       COMPONENT = var.component

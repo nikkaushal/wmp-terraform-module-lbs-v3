@@ -10,9 +10,6 @@ variable "databases" {
 variable "apps" {
   
 }
-variable "lb" {
-  
-}
 variable "subnets" {
     
     }
