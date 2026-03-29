@@ -3,7 +3,7 @@ resource "aws_security_group" "instance" {
   name = "${var.component}-${var.env}-instance"
 
 
-    egress {
+    ingress {
         from_port   = 22
         to_port     = 22
         protocol    = "tcp"
@@ -45,21 +45,24 @@ resource "aws_security_group" "alb" {
 }
 
 resource "aws_launch_template" "main" {
-  name_prefix   = "${var.component}-${var.env}-"
+  name          = "${var.component}-${var.env}-"
   image_id      = data.aws_ami.ami.id
   instance_type = var.instance_type
+  vpc_security_group_ids = [aws_security_group.instance.id, aws_security_group.alb.id]
 
-  network_interfaces {
-    security_groups = [aws_security_group.instance.id, aws_security_group.alb.id]
-  }
-
+  user_data = base64encode(templatefile("${path.module}/usedata.sh", 
+    {
+      ENV       = var.env,
+      COMPONENT = var.component
+    }
+  ))
   tag_specifications {
     resource_type = "instance"
 
     tags = {
       Name = "${var.component}-${var.env}"
     }
-  }
+  }  
 }
 
 
@@ -69,17 +72,26 @@ resource "aws_autoscaling_group" "main" {
   max_size                  = var.asg["max_size"]
   min_size                  = var.asg["min_size"]
   desired_capacity          = var.asg["min_size"]
+  target_group_arns         = [aws_lb_target_group.main.arn]
   launch_template {
     id      = aws_launch_template.main.id
     version = "$Latest"
   }
 }
 
-resource "aws_lb_target_group" "test" {
+resource "aws_lb_target_group" "main" {
   name     = "${var.component}-${var.env}"
   port     = var.lb["port"]
   protocol = "HTTP"
   vpc_id   = var.vpc_id
+  health_check {
+    path = "/health"
+    healthy_threshold = 2
+    unhealthy_threshold = 2
+    interval = 5
+    timeout = 2
+    matcher = "200,403"
+  }
 
 }
 resource "aws_alb" "main" {
@@ -90,6 +102,18 @@ resource "aws_alb" "main" {
   subnets         = var.subnets
   tags = {
     Name = "${var.component}-${var.env}"
+  }
+  
+}
+
+resource "aws_lb_listener" "front-end" {
+  load_balancer_arn = aws_alb.main.arn
+  port              = var.lb["port"]
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.main.arn
   }
   
 }
