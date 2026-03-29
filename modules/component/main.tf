@@ -1,0 +1,58 @@
+resource "aws_security_group" "main" {  
+    
+  name = "${var.component}-${var.env}"
+
+  dynamic "ingress" {
+    for_each = var.ports
+    content {
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+
+    egress {
+        from_port   = 0
+        to_port     = 0
+        protocol    = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+    tags = {
+        Name = "${var.component}-${var.env}"
+    }
+}
+
+resource "aws_instance" "main" {
+  ami                    = data.aws_ami.ami.id
+  instance_type          = var.instance_type
+  vpc_security_group_ids = [aws_security_group.main.id]
+
+  tags = {
+    Name = "${var.component}-${var.env}"
+  }
+}
+
+resource "aws_route53_record" "dns" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = "${var.component}-${var.env}.${var.dns_domain}"
+  type    = "A"
+  ttl     = 30
+  records = [aws_instance.main.private_ip]  
+}
+
+resource "null_resource" "ansible" {
+
+  provisioner "remote-exec" {
+    connection {
+      type     = "ssh"
+      host     = aws_instance.main.private_ip
+      user     = "ec2-user"
+      password = "DevOps321"
+    }
+    inline = [
+      "sudo labauto ansible",
+      "ansible-pull -i localhost, -U https://github.com/nikkaushal/wmp-ansible-templates-v3.git main.yml -e env=${var.env} -e COMPONENT=${var.component}"
+    ]
+  }
+} 
