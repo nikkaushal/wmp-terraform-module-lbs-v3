@@ -12,15 +12,15 @@ variable "instance_type" {
 variable "ports" {
   
 }
-variable "asg_min_size" {
-  
-}
-variable "asg_max_size" {
+variable "asg" {
   
 }
 variable "lb" {
   
 }
 variable "subnets" {
+  
+}
+variable "vpc_id" {
   
 }

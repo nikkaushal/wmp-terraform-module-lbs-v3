@@ -11,13 +11,18 @@ module "databases" {
 
 module "apps" {
   depends_on = [module.databases]
-  for_each   = var.apps
-  source     = "./modules/component-with-alb"
 
-  component     = each.key
+  source     = "./modules/component-with-alb"
   dns_domain    = var.dns_domain
   env           = var.env
+  subnets       = var.subnets
+  vpc_id        = var.vpc_id
+  for_each      = var.apps
   instance_type = each.value["instance_type"]
+  component     = each.key
   ports         = each.value["ports"]
+  lb            = each.value["lb"]
+  asg          = each.value["asg"]
+
 }
 

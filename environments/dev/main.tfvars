@@ -1,6 +1,7 @@
 dns_domain = "tek-nik.com."
 env        = "dev"
-
+vpc_id     = "vpc-82bd6eff"
+subnets    = ["subnet-73f3732c", "subnet-7f830419"]
 databases = {
   postgres = {
     instance_type = "t3.small"
@@ -22,6 +23,10 @@ apps = {
       lb_internal = false
       port = 80
     }
+    asg = {
+      min_size = 2
+      max_size = 10
+    }
   }
 
   auth-service = {
@@ -33,6 +38,10 @@ apps = {
       lb_internal = true
       port = 8081
     }    
+    asg = {
+      min_size = 2
+      max_size = 10
+    }
   }
 
   portfolio-service = {
@@ -44,6 +53,10 @@ apps = {
       lb_internal = true
       port = 8080
     }
+    asg = {
+      min_size = 2
+      max_size = 10
+    }
   }
 
   analytics-service = {
@@ -54,6 +67,10 @@ apps = {
     lb = {
       lb_internal = true
       port = 8080
+    }
+    asg = {
+      min_size = 2
+      max_size = 10
     }
   }
 
