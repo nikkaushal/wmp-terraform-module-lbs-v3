@@ -12,7 +12,7 @@ module "databases" {
 module "apps" {
   depends_on = [module.databases]
 
-  source     = "./modules/component-with-alb"
+  source        = "./modules/component-with-alb"
   dns_domain    = var.dns_domain
   env           = var.env
   subnets       = var.subnets
@@ -22,7 +22,7 @@ module "apps" {
   component     = each.key
   ports         = each.value["ports"]
   lb            = each.value["lb"]
-  asg          = each.value["asg"]
+  asg           = each.value["asg"]
 
 }
 

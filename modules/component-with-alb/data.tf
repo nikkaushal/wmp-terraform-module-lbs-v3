@@ -1,6 +1,6 @@
 data "aws_ami" "ami" {
 
-  owners           = ["973714476881"]
+  owners = ["973714476881"]
 
   filter {
     name   = "name"
@@ -9,5 +9,5 @@ data "aws_ami" "ami" {
 
 }
 data "aws_route53_zone" "main" {
-  name         = "tek-nik.com"
+  name = "tek-nik.com"
 }

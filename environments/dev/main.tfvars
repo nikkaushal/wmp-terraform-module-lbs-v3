@@ -21,7 +21,7 @@ apps = {
     }
     lb = {
       lb_internal = false
-      port = 80
+      port        = 80
     }
     asg = {
       min_size = 2
@@ -36,8 +36,8 @@ apps = {
     }
     lb = {
       lb_internal = true
-      port = 8081
-    }    
+      port        = 8081
+    }
     asg = {
       min_size = 2
       max_size = 10
@@ -51,7 +51,7 @@ apps = {
     }
     lb = {
       lb_internal = true
-      port = 8080
+      port        = 8080
     }
     asg = {
       min_size = 2
@@ -66,7 +66,7 @@ apps = {
     }
     lb = {
       lb_internal = true
-      port = 8000
+      port        = 8000
     }
     asg = {
       min_size = 2

@@ -1,5 +1,5 @@
-resource "aws_security_group" "main" {  
-    
+resource "aws_security_group" "main" {
+
   name = "${var.component}-${var.env}"
 
   dynamic "ingress" {
@@ -12,15 +12,15 @@ resource "aws_security_group" "main" {
     }
   }
 
-    egress {
-        from_port   = 0
-        to_port     = 0
-        protocol    = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-    tags = {
-        Name = "${var.component}-${var.env}"
-    }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name = "${var.component}-${var.env}"
+  }
 }
 
 resource "aws_instance" "main" {
@@ -38,7 +38,7 @@ resource "aws_route53_record" "dns" {
   name    = "${var.component}-${var.env}.${var.dns_domain}"
   type    = "A"
   ttl     = 30
-  records = [aws_instance.main.private_ip]  
+  records = [aws_instance.main.private_ip]
 }
 
 resource "null_resource" "ansible" {
@@ -55,4 +55,4 @@ resource "null_resource" "ansible" {
       "ansible-pull -i localhost, -U https://github.com/nikkaushal/wmp-ansible-templates-v3.git main.yml -e env=${var.env} -e COMPONENT=${var.component}"
     ]
   }
-} 
+}
